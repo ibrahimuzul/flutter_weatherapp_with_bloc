@@ -7,7 +7,6 @@ import './bloc.dart';
 
 class WeatherBloc extends Bloc<WeatherEvent, WeatherState> {
   final WeatherRepository weatherRepository = locator<WeatherRepository>();
-
   // final WeatherRepository weatherRepository2 = locator.get<WeatherRepository>();
 
   @override
@@ -19,10 +18,18 @@ class WeatherBloc extends Bloc<WeatherEvent, WeatherState> {
       yield WeatherLoadingState();
       try {
         final Weather getirilenWeather =
-            await weatherRepository.getWeather(event.sehirAdi);
+        await weatherRepository.getWeather(event.sehirAdi);
         yield WeatherLoadedState(weather: getirilenWeather);
       } catch (_) {
         yield WeatherErrorState();
+      }
+    } else if (event is RefreshWeatherEvent) {
+      try {
+        final Weather getirilenWeather =
+        await weatherRepository.getWeather(event.sehirAdi);
+        yield WeatherLoadedState(weather: getirilenWeather);
+      } catch (_) {
+        yield currentState;
       }
     }
   }
